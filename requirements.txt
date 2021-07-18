@@ -1,0 +1,14 @@
+librosa==0.8.0
+absl-py
+yapf
+pylint
+flake8
+tqdm
+sentencepiece
+jieba
+pandas<=0.25.1 
+kaldiio
+rarfile
+inflect
+pyworld
+Pillow
