@@ -15,6 +15,7 @@
 # ==============================================================================
 # Only support eager mode and TF>=2.0.0
 """ some metrics """
+import os
 from absl import logging
 import numpy as np
 import tensorflow as tf
@@ -81,8 +82,12 @@ class CharactorAccuracy(Accuracy):
         )
         num_errs = tf.reduce_sum(num_errs)
         if self.rank_size > 1:
-            num_errs = hvd.allreduce(num_errs, average=False)
-            labels_counter = hvd.allreduce(labels_counter, average=False)
+            if os.getenv('HOROVOD_TRAIN_MODE', 'normal') == 'fast':
+                num_errs = hvd.allreduce(num_errs, op=hvd.AdaSum)
+                labels_counter = hvd.allreduce(labels_counter, op=hvd.AdaSum)
+            else:
+                num_errs = hvd.allreduce(num_errs, average=False)
+                labels_counter = hvd.allreduce(labels_counter, average=False)
         self.error_count(num_errs)
         self.total_count(labels_counter)
         return num_errs, labels_counter

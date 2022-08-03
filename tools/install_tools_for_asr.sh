@@ -27,17 +27,21 @@ fi
 # Tool to convert sph audio format to wav format.
   
   bash tools/install_sph2pipe.sh &>install_sph2pipe.log.txt
-  
-# Tool to train ngram LM, reference to https://github.com/kpu/kenlm
 
-
-
-  bash tools/install_kenlm.sh &>install_sph2pipe.log.txt
 # Tool to compute score with sclite
-  sudo apt install build-essential cmake libboost-system-dev libboost-thread-dev libboost-program-options-dev libboost-test-dev libeigen3-dev zlib1g-dev libbz2-dev liblzma-dev
-  bash tools/install_sclite.sh &>install_sph2pipe.log.txt
+  bash tools/install_sclite.sh &>install_sclite.log.txt
 
 # Tool to deal text
 
-  bash tools/install_spm.sh &>install_sph2pipe.log.txt
+  bash tools/install_spm.sh &>install_spm.log.txt
 
+# install flac
+  wget  https://downloads.xiph.org/releases/flac/flac-1.3.3.tar.xz
+  xz -d flac-1.3.3.tar.xz
+  tar -xvf flac-1.3.3.tar
+  mkdir -p /usr/local/flac
+  cd flac-1.3.3
+  ./configure --prefix=/usr/local/flac
+  make && make install
+  echo "export PATH=/usr/local/flac/bin:$PATH">>~/.bashrc
+  source ~/.bashrc

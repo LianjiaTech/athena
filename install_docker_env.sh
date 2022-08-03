@@ -24,8 +24,8 @@
 
 
 # Clone athena package
-   
-  git clone -b Athena-v0.1 https://github.com/athena-team/athena.git
+
+  git clone https://git.lianjia.com/speech_tech/athena.git
 
   cd athena
 
@@ -49,16 +49,11 @@ fi
 # Tool to convert sph audio format to wav format.
   
   bash tools/install_sph2pipe.sh
-  
-# Tool to train ngram LM, reference to https://github.com/kpu/kenlm
-  sudo apt install build-essential cmake libboost-system-dev libboost-thread-dev libboost-program-options-dev libboost-test-dev libeigen3-dev zlib1g-dev libbz2-dev liblzma-dev
-  bash tools/install_kenlm.sh
+
 # Tool to compute score with sclite
 
   bash tools/install_sclite.sh
-
   bash tools/install_spm.sh
-
 
 # Other python library
   

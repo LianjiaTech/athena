@@ -1,19 +1,26 @@
 #!/usr/bin/env bash
-
-
 status=0
-
 # check some system-level installations you need to do in this script
+# linux
+if which yum >&/dev/null; then
+   echo "$0: you system is Centos, you should change the following apt or apt-get to yum. but we recommend using ubuntu !"
+  status=1
+  exit 1;
+fi
+
+if ! which apt-get >&/dev/null || ! which apt >/dev/null; then
+  echo "$0: We just provide the installation steps with the corresponding linux system environment."
+  echo "$0: We suggest you switch to Ubuntu."
+  status=1
+  exit 1;
+fi
+
 
 # which
 if ! which which >&/dev/null; then
   echo "$0: which is not installed."
   status=1
-fi
-
-# linux 
-if which yum >&/dev/null; then
-   echo "$0: you system is Centos, you should change the following apt or apt-get to yum. but we recommend using ubuntu !"
+  exit 1;
 fi
 
 # tensorflow-text

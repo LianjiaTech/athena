@@ -1,5 +1,5 @@
 # coding=utf-8
-# Copyright (C) ATHENA AUTHORS; Wenet; JianweiSun;
+# Copyright (C) ATHENA AUTHORS;
 # All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,7 +16,11 @@
 # ==============================================================================
 # pylint: disable=missing-function-docstring, invalid-name
 
-""" preprecessing for speech features """
+""" preprecessing for speech features
+
+This code is modified from https://github.com/wenet-e2e/wenet.git.
+
+"""
 import random
 from PIL import Image
 from PIL.Image import BICUBIC
@@ -94,7 +98,7 @@ class SpecAugment:
         max_freq = y.shape[1]
 
         # time warp
-        if self.warp_for_time and self.max_frames > self.max_w * 2:
+        if self.warp_for_time and max_frames > self.max_w * 2:
             center = random.randrange(self.max_w, max_frames - self.max_w)
             warped = random.randrange(center - self.max_w, center + self.max_w) + 1
 

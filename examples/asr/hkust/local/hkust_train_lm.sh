@@ -22,7 +22,7 @@
 
 if  [ ! -x "$(command -v ./tools/kenlm/build/bin/lmplz)" ]; then
         echo "lmplz is not installed !! "
-		echo "Checkout toos/install_kenlm.sh, run bash toos/install_sclite.sh to install"
+		echo "Checkout tools/install_kenlm.sh, run bash tools/install_sclite.sh to install"
         exit 1
 fi
 

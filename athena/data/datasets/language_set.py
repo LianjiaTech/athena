@@ -15,7 +15,7 @@
 # ==============================================================================
 # pylint: disable=no-member, invalid-name
 """ audio dataset """
-from ...utils.logger import LOG as logging
+from absl import logging
 import tensorflow as tf
 import tqdm
 from ..text_featurizer import TextFeaturizer

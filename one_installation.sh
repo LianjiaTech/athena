@@ -20,18 +20,18 @@ horovod=false  # multiple-device training , set to true
 
 #This installation script you need to do for running athena
 
-if [ "athena" != $(basename "$PWD") ]; then
-    echo "You should run this script in athena directory!!"
-    exit 1
-fi
+#if [ "athena" != $(basename "$PWD") ]; then
+#    echo "You should run this script in athena directory!!"
+#    exit 1
+#fi
 
 # check and see if there are any system-level installations you need to do
 
   bash check_source.sh
 
 # creating a virtual environment and installing the python requirements
-  apt-get install python3-venv
-  python3 -m venv venv_athena
+  pip3 install virtualenv
+  virtualenv venv_athena
   source venv_athena/bin/activate
 
 # Install tensorflow backend
@@ -42,7 +42,7 @@ fi
   if $horovod;then
      bash tools/install_horovod.sh
   fi
-# Install *sph2pipe*, *spm*, *kenlm*, *sclite* for ASR Tasks
+# Install *sph2pipe*, *spm*,*sclite* for ASR Tasks
   
   bash tools/install_tools_for_asr.sh
 

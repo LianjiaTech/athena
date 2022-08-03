@@ -26,7 +26,8 @@ sudo apt install libnccl2=2.8.3-1+cuda10.1 libnccl-dev=2.8.3-1+cuda10.1
 ## install OpenMPI
 
 if [ ! -f openmpi-4.0.5.tar.gz ];then
-    echo wget https://download.open-mpi.org/release/open-mpi/v4.0/openmpi-4.0.5.tar.gz
+
+    echo 'wget https://download.open-mpi.org/release/open-mpi/v4.0/openmpi-4.0.5.tar.gz'
     wget https://download.open-mpi.org/release/open-mpi/v4.0/openmpi-4.0.5.tar.gz
 fi
 
@@ -47,7 +48,7 @@ sudo apt install cmake
 
 ## install horovod
 
-HOROVOD_GPU_ALLREDUCE=NCCL pip install horovod
+HOROVOD_GPU_OPERATIONS=NCCL HOROVOD_WITH_MPI=1 HOROVOD_WITH_TENSORFLOW=1 pip install horovod==0.23.0
 
 horovodrun=`which horovodrun`
 if [ ! -x $horovodrun ]; then

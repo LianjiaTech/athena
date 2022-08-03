@@ -1,4 +1,4 @@
-# Copyright (C) ATHENA AUTHORS; Yanguang Xu
+# Copyright (C) 2022 ATHENA AUTHORS; Yanguang Xu
 # All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,7 +18,11 @@
 import sys
 import json
 from absl import logging
+
+import tensorflow as tf
+from athena import SpeechRecognitionDatasetKaldiIOBuilder, SpeechRecognitionDatasetBuilder
 from athena.main import parse_config, SUPPORTED_DATASET_BUILDER
+
 if __name__ == "__main__":
     if len(sys.argv) < 2:
         logging.warning('Usage: python {} config_json_file'.format(sys.argv[0]))
@@ -29,9 +33,24 @@ if __name__ == "__main__":
         config = json.load(file)
     p = parse_config(config)
 
-    dataset_builder = SUPPORTED_DATASET_BUILDER[p.dataset_builder](p.trainset_config)
-    dataset_builder.storage_features_offline(p.trainset_config["data_csv"],p.trainset_config["data_scps_dir"])
-    dataset_builder = SUPPORTED_DATASET_BUILDER[p.dataset_builder](p.devset_config)
-    dataset_builder.storage_features_offline(p.devset_config["data_csv"],p.devset_config["data_scps_dir"])
-    dataset_builder = SUPPORTED_DATASET_BUILDER[p.dataset_builder](p.testset_config)
-    dataset_builder.storage_features_offline(p.testset_config["data_csv"],p.testset_config["data_scps_dir"])
+    gpus = tf.config.experimental.list_physical_devices("GPU")
+    for gpu in gpus:
+        tf.config.experimental.set_memory_growth(gpu, True)
+
+    dataset_builder_class = SpeechRecognitionDatasetBuilder
+    if p.trainset_config is not None:
+        dataset_builder = dataset_builder_class(p.trainset_config)
+        dataset_builder.storage_features_offline()
+    else:
+        logging.warning("There is no train config")
+    if p.devset_config is not None:
+        dataset_builder = dataset_builder_class(p.devset_config)
+        dataset_builder.storage_features_offline()
+    else:
+        logging.warning("There is no dev config")
+    if p.testset_config is not None:
+        dataset_builder = dataset_builder_class(p.testset_config)
+        dataset_builder.storage_features_offline()
+    else:
+        logging.warning("There is no test config")
+

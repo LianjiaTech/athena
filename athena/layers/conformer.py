@@ -52,6 +52,7 @@ class Conformer(tf.keras.layers.Layer):
         self,
         d_model=512,
         nhead=8,
+        cnn_module_kernel=15,
         num_encoder_layers=6,
         num_decoder_layers=6,
         dim_feedforward=2048,
@@ -66,7 +67,7 @@ class Conformer(tf.keras.layers.Layer):
         else:
             encoder_layers = [
                 ConformerEncoderLayer(
-                    d_model, nhead, dim_feedforward, dropout, activation
+                    d_model, nhead, cnn_module_kernel, dim_feedforward, dropout, activation
                 )
                 for _ in range(num_encoder_layers)
             ]
@@ -230,7 +231,7 @@ class ConformerEncoderLayer(tf.keras.layers.Layer):
     """
 
     def __init__(
-        self, d_model, nhead, dim_feedforward=2048, dropout=0.1, activation="gelu"
+        self, d_model, nhead, cnn_module_kernel=15, dim_feedforward=2048, dropout=0.1, activation="gelu"
     ):
         super().__init__()
         self.self_attn = MultiHeadAttention(d_model, nhead)
@@ -281,7 +282,7 @@ class ConformerEncoderLayer(tf.keras.layers.Layer):
             ]
         )
 
-        self.conv_module = ConvModule(d_model, kernel_size=32)
+        self.conv_module = ConvModule(d_model, kernel_size=cnn_module_kernel)
         self.norm1 = layers.LayerNormalization(epsilon=1e-8, input_shape=(d_model,))
         self.norm2 = layers.LayerNormalization(epsilon=1e-8, input_shape=(d_model,))
         self.norm3 = layers.LayerNormalization(epsilon=1e-8, input_shape=(d_model,))

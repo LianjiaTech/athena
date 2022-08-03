@@ -23,19 +23,25 @@ set -e
 stage=0
 stop_stage=100
 
-# horovod options
+gpu_nums=1
 
-horovod_cmd="horovodrun -np 1 -H localhost:1"
-horovod_prefix="horovod_"
-
-# seletion options 
-pretrain=false    # pretrain options, we provide Masked Predictive Coding (MPC) pretraining, default false 
-rnnlm=true  # rnn language model training is provided ,set to false,if use ngram language model
+# seletion options
+pretrain=false    # pretrain options, we provide Masked Predictive Coding (MPC) pretraining, default false
+train_lm=true
+transformer_lm=true  # rnn language model training is provided ,set to false,if use ngram language model
 use_wfst=false  # decode options
-offline=false	# storage features offline options, set to true if needed, default false 
+offline=true   # use offline feature, also can use feature file in kaldi format.
 
 # source some path
 . ./tools/env.sh
+
+# horovod options
+horovod_cmd=
+horovod_prefix=
+if [ ${gpu_nums} -gt 1 ]; then
+  horovod_cmd="horovodrun -np ${gpu_nums} -H localhost:${gpu_nums}"
+  horovod_prefix="horovod_"
+fi
 
 if [ "athena" != $(basename "$PWD") ]; then
     echo "You should run this script in athena directory!!"
@@ -46,18 +52,24 @@ fi
 
 dataset_dir=examples/asr/aishell/data/data_aishell
 
+if $train_lm; then
+  decode_config=examples/asr/aishell/configs/mtl_transformer_sp_fbank80_decode_transformer_lm.json
+else
+  decode_config=examples/asr/aishell/configs/mtl_transformer_sp_fbank80_decode.json
+fi
+
 if [ ! -d "$dataset_dir" ]; then
   echo "\no such directory $dataset_dir"
   echo "downloading data from www.openslr.org..... "
   bash examples/asr/aishell/local/aishell_download_and_untar.sh examples/asr/aishell/data \
-                                                           www.openslr.org/resources/33 \
+                                                            https://openslr.magicdatatech.com/resources/33 \
 														   data_aishell
 fi
 
 # prepare aishell data
 
 if [ ${stage} -le 0 ] && [ ${stop_stage} -ge 0 ]; then
-    
+
     echo "Preparing data and Creating csv"
     bash examples/asr/aishell/local/aishell_data_prep.sh $dataset_dir examples/asr/aishell/data
 fi
@@ -73,50 +85,53 @@ if [ ${stage} -le 1 ] && [ ${stop_stage} -ge 1 ]; then
         examples/asr/aishell/configs/cmvn.json examples/asr/aishell/data/all.csv || exit 1
 fi
 
-# storage features offline
-
-if [ ${stage} -le 2 ] && [ ${stop_stage} -ge 2 ] && $offline; then
-    echo "storage features offline"
-    python athena/tools/storage_features_offline.py examples/asr/aishell/configs/storage_features_offline.json
-fi
-
-## pretrain stage 
+## pretrain stage
 if $pretrain;then
-   if [ ${stage} -le 3 ] && [ ${stop_stage} -ge 3 ]; then
+   if [ ${stage} -le 2 ] && [ ${stop_stage} -ge 2 ]; then
     echo "Pretraining with mpc"
     $horovod_cmd python athena/${horovod_prefix}main.py \
         examples/asr/aishell/configs/mpc.json || exit 1
    fi
 fi
 
-# Multi-task training stage 
+# Multi-task training stage
 
-if [ ${stage} -le 4 ] && [ ${stop_stage} -ge 4 ]; then
+if [ ${stage} -le 3 ] && [ ${stop_stage} -ge 3 ]; then
     echo "Multi-task training"
-    $horovod_cmd python athena/${horovod_prefix}main.py \
-        examples/asr/aishell/configs/mtl_transformer_sp.json || exit 1
+    if ! $offline; then
+      $horovod_cmd python athena/${horovod_prefix}main.py \
+          examples/asr/aishell/configs/mtl_transformer_sp_fbank80.json || exit 1
+    else
+      if [ ! -f examples/asr/aishell/data/train/.done ]; then
+          python athena/tools/storage_features_offline.py examples/asr/aishell/configs/mtl_transformer_sp_offline.json || exit 1
+          touch examples/asr/aishell/data/train/.done
+      fi
+      $horovod_cmd python athena/${horovod_prefix}main.py \
+          examples/asr/aishell/configs/mtl_transformer_sp_offline.json || exit 1
+    fi
 fi
 
-# prepare language model 
-if $rnnlm;then
-   # training rnnlm
-   if [ ${stage} -le 5 ] && [ ${stop_stage} -ge 5 ]; then
-        echo "training rnnlm"
-		bash examples/asr/aishell/local/aishell_train_rnnlm.sh
-   fi
-else
-   # training ngram lm
-   if [ ${stage} -le 5 ] && [ ${stop_stage} -ge 5 ]; then
-        echo "training ngram lm"
-		bash examples/asr/aishell/local/aishell_train_lm.sh
-   fi
+# prepare language model
+if $train_lm; then
+  if $transformer_lm; then
+     # training transformer_lm
+     if [ ${stage} -le 4 ] && [ ${stop_stage} -ge 4 ]; then
+          echo "training transformer_lm"
+      bash examples/asr/aishell/local/aishell_train_transformer_lm.sh examples/asr/aishell/configs/transformer_lm.json
+     fi
+  else
+     # training ngram lm
+     if [ ${stage} -le 4 ] && [ ${stop_stage} -ge 4 ]; then
+          echo "training ngram lm"
+      bash examples/asr/aishell/local/aishell_train_ngram_lm.sh examples/asr/aishell/data/5gram.arpa
+     fi
+  fi
 fi
 
 # decode
-
 if $use_wfst;then
    # wfst decoding
-   if [ ${stage} -le 6 ] && [ ${stop_stage} -ge 6 ]; then
+   if [ ${stage} -le 5 ] && [ ${stop_stage} -ge 5 ]; then
       echo "Running decode with WFST..."
       echo "For now we will simply download LG.fst and words.txt from athena-decoder project"
       echo "Feel free to checkout graph creation manual at https://github.com/athena-team/athena-decoder#build-graph"
@@ -127,19 +142,21 @@ if $use_wfst;then
           examples/asr/aishell/configs/mtl_transformer_sp_wfst.json || exit 1
    fi
 else
-   # beam search decoding, rnnlm default
-   if [ ${stage} -le 6 ] && [ ${stop_stage} -ge 6 ]; then
-      echo "Running decode with beam search..."
-      python athena/inference.py \
-        examples/asr/aishell/configs/mtl_transformer_sp.json || exit 1
+   # attention_rescoring decoding, transformer_lm rescoring default.
+   # attention_rescoring, ctc_prefix_beam_search and attention_decoder decoding are optional.
+   if [ ${stage} -le 5 ] && [ ${stop_stage} -ge 5 ]; then
+      echo "Running decode with attention rescoring..."
+      mkdir -p examples/asr/aishell/result
+      python athena/inference.py $decode_config || exit 1
    fi
 fi
 
 # score-computing stage
 
-if [ ${stage} -le 7 ] && [ ${stop_stage} -ge 7 ]; then
+if [ ${stage} -le 6 ] && [ ${stop_stage} -ge 6 ]; then
    echo "computing score with sclite ..."
-   bash examples/asr/aishell/local/run_score.sh inference.log score_aishell examples/asr/aishell/data/vocab
+   result_path_without_ext=$(grep predict_path $decode_config | awk -F "[\"\"]" '{print $4}' | awk -F '.' '{$NF="";print $0}')
+   bash examples/asr/aishell/local/run_score.sh $result_path_without_ext examples/asr/aishell/data/vocab
 fi
 
 

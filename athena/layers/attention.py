@@ -18,7 +18,7 @@
 
 """ Attention layers. """
 
-from ..utils.logger import LOG as logging
+from absl import logging
 import tensorflow as tf
 
 

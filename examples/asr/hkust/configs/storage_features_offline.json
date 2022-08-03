@@ -1,5 +1,5 @@
 {
-  "dataset_builder": "speech_recognition_dataset_kaldiio",
+  "dataset_builder": "speech_recognition_dataset",
   "num_data_threads": 1,
   "trainset_config":{
     "data_scps_dir": "examples/asr/hkust/data/train",

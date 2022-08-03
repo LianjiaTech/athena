@@ -64,7 +64,7 @@ class ConvModule(tf.keras.layers.Layer):
             name="depthwise_conv"
         )
         self.bn = tf.keras.layers.BatchNormalization()
-        self.activation = ACTIVATIONS[activation] 
+        self.activation = ACTIVATIONS["swish"]
  
         self.pointwise_conv2 = tf.keras.layers.Conv1D(
             filters=d_model, 

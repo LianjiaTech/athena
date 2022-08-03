@@ -25,15 +25,12 @@ stop_stage=100
 
 # horovod options
 
-horovod_cmd="horovodrun -np 1 -H localhost:1"
+horovod_cmd="horovodrun -np 1 -H localhost:1 -autotune --autotune-log-file /tmp/autotune_log.csv"
 horovod_prefix="horovod_"
-
-
 # seletion options 
 pretrain=false    # pretrain options, we provide Masked Predictive Coding (MPC) pretraining, default false 
 rnnlm=true  # rnn language model training is provided ,set to false,if use ngram language model
-offline=false	# storage features offline options, set to true if needed, default false
-use_wfst=false  # decode options
+
 # data options
 dataset_dir=data/hkust_resource
 
@@ -68,16 +65,9 @@ if [ ${stage} -le 1 ] && [ ${stop_stage} -ge 1 ]; then
         examples/asr/hkust/configs/cmvn.json examples/asr/hkust/data/all.csv || exit 1
 fi
 
-# storage features offline
-
-if [ ${stage} -le 2 ] && [ ${stop_stage} -ge 2 ] && $offline; then
-    echo "storage features offline"
-    python athena/tools/storage_features_offline.py examples/asr/hkust/configs/storage_features_offline.json
-fi
-
 ## pretrain stage mpc 
-if $pretrain;then
-   if [ ${stage} -le 3 ] && [ ${stop_stage} -ge 3 ]; then
+if $mpc;then
+   if [ ${stage} -le 2 ] && [ ${stop_stage} -ge 2 ]; then
     echo "Pretraining with mpc"
     $horovod_cmd python athena/${horovod_prefix}main.py \
         examples/asr/hkust/configs/mpc.json || exit 1
@@ -86,7 +76,7 @@ fi
 
 # Multi-task training stage 
 
-if [ ${stage} -le 4 ] && [ ${stop_stage} -ge 4 ]; then
+if [ ${stage} -le 3 ] && [ ${stop_stage} -ge 3 ]; then
     echo "Multi-task training"
     $horovod_cmd python athena/${horovod_prefix}main.py \
         examples/asr/hkust/configs/mtl_transformer_sp.json || exit 1
@@ -95,13 +85,13 @@ fi
 # prepare language model 
 if $rnnlm;then
    # training rnnlm
-   if [ ${stage} -le 5 ] && [ ${stop_stage} -ge 5 ]; then
+   if [ ${stage} -le 4 ] && [ ${stop_stage} -ge 4 ]; then
         echo "training rnnlm"
 		bash examples/asr/hkust/local/aishell_train_rnnlm.sh
    fi
 else
    # training ngram lm
-   if [ ${stage} -le 5 ] && [ ${stop_stage} -ge 5 ]; then
+   if [ ${stage} -le 4 ] && [ ${stop_stage} -ge 4 ]; then
         echo "training ngram lm"
 		bash examples/asr/hkust/local/hkust_train_lm.sh
    fi
@@ -109,7 +99,7 @@ fi
 
 # decode
 
-if [ ${stage} -le 6 ] && [ ${stop_stage} -ge 6 ]; then
+if [ ${stage} -le 5 ] && [ ${stop_stage} -ge 5 ]; then
     echo "Decoding"
     python athena/inference.py \
         examples/asr/hkust/configs/mtl_transformer_sp.json || exit 1
@@ -117,7 +107,7 @@ fi
 
 # score-computing stage
 
-if [ ${stage} -le 7 ] && [ ${stop_stage} -ge 7 ]; then
+if [ ${stage} -le 6 ] && [ ${stop_stage} -ge 6 ]; then
    echo "computing score with sclite ..."
    bash examples/asr/hkust/local/run_score.sh inference.log score_hkust examples/asr/hkust/data/vocab
 fi

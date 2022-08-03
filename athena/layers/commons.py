@@ -503,4 +503,5 @@ ACTIVATIONS = {
     "softplus": tf.nn.softplus,
     "softsign": tf.nn.softsign,
     "tanh": tf.nn.tanh,
+    "swish": tf.nn.swish,
 }
