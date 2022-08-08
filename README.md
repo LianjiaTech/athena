@@ -10,7 +10,7 @@ All of our models are implemented in Tensorflow>=2.0.1. For ease of use, we prov
 - Hybrid Attention/CTC based end-to-end and streaming methods(ASR)
 - Text-to-Speech(FastSpeech/FastSpeech2/Transformer)
 - Voice activity detection(VAD)  
-- Wake Word Spotting with end-to-end and streaming methods(WWS)
+- Key Word Spotting with end-to-end and streaming methods(KWS)
 - ASR Unsupervised pre-training(MPC)
 - Multi-GPU training on one machine or across multiple machines with Horovod
 - WFST creation and WFST-based decoding with C++
@@ -19,7 +19,7 @@ All of our models are implemented in Tensorflow>=2.0.1. For ease of use, we prov
 ## What's new
 - 2022/05/13 The runtime supports [C++ decoding](runtime/core)(E2E, Streaming, WFST, PrefixBeamSearch etc) and [Deployment](runtime/server)
 - 2022/05/10 The functions about [adding noise and rir](athena/transform/feats/add_rir_noise_aecres_test.py) aecres to clean noise are added to the transform
-- 2022/04/25 The functions about [WWS](athena/models/kws) are added to Athena-v2.0
+- 2022/04/25 The functions about [KWS](athena/models/kws) are added to Athena-v2.0
 - 2022/04/07 The [AV-Cransformer](athena/models/asr/av_conformer.py) for ASR and [MISP2021 task2 example](examples/asr/misp) are added to Athena-v2.0
 - 2022/04/05 The [Transformer-U2](athena/models/asr/speech_u2.py) and examples are added to Athena-v2.0
 - 2022/03/20 The [CTC alignment function](examples/align) is add to Athena-v2.0
@@ -44,7 +44,7 @@ All of our models are implemented in Tensorflow>=2.0.1. For ease of use, we prov
     - [3.1) ASR](#31-asr)
     - [3.2) TTS](#32-tts)
     - [3.3) VAD](#33-vad)
-    - [3.4) WWS](#34-wws)
+    - [3.4) KWS](#34-kws)
     - [3.5) CTC-Alignment](#35-ctc-alignment)
     - [3.6) Deploy](#36-deploy)
   - [4) Run demo ](#3-rundemo)
@@ -141,13 +141,13 @@ VAD  | MarbleNet | Google Speech Commands Dataset V2 | 0.63s | 2.50%
 
 More details see [VAD readme](examples/vad/README.md)
 
-### 3.4) WWS
+### 3.4) KWS
 
 The performances on [MISP2021 task1](https://mispchallenge.github.io/task1_data.html) dataset are shown as follow:
 
 <details><summary>expand</summary><div>
 
-|  WWS Type |      Model     |         Model Detail        |         Data         |   Loss   |  Dev  |  Eval |
+|  KWS Type |      Model     |         Model Detail        |         Data         |   Loss   |  Dev  |  Eval |
 |:---------:|:--------------:|:---------------------------:|:--------------------:|:--------:|:-----:|:-----:|
 | Streaming |     CNN-DNN    |        2 Conv+3 Dense       |   60h pos+200h neg   |    CE    | 0.314 |   /   |
 |    E2E    |      CRNN      |        2 Conv+2 biGRU       |   60h pos+200h neg   |    CE    | 0.209 |   /   |
@@ -159,7 +159,7 @@ The performances on [MISP2021 task1](https://mispchallenge.github.io/task1_data.
 
 </div></details>
 
-More details you can see: [WWS readme](examples/kws/README.md)
+More details you can see: [KWS readme](examples/kws/README.md)
 ### 3.5) CTC-Alignment
 The CTC alignment result of one utterance is shown below, we can see the output of ctc alignment is with time delayed:
 
@@ -184,12 +184,12 @@ Athena-V2.0 deployment only support the ASR. All the experiments are conducted o
 | 10         |                       | 1        | 0.04792 | 92.65%             |
 |            |                       | 10       | 0.1135  | 93.07%             |
 |            |                       | 20       | 0.1746  | 93.06%             |
-| 1          | CTC Prefix BeamSearch | 1        | 0.09822 | 93.60%             |
-|            |                       | 10       | 0.5265  | 93.60%             |
-|            |                       | 20       | 1.026   | 93.60%             |
-| 10         |                       | 1        | 0.07508 | 93.60%             |
-|            |                       | 10       | 0.5056  | 93.60%             |
-|            |                       | 20       | 1.011   | 93.60%             |
+| 1          | CTC Prefix BeamSearch | 1        | 0.0543 | 93.60%             |
+|            |                       | 10       | 0.06  | 93.60%             |
+|            |                       | 20       | 0.0903  | 93.60%             |
+| 10         |                       | 1        | 0.0283 | 93.60%             |
+|            |                       | 10       | 0.038  | 93.60%             |
+|            |                       | 20       | 0.0641   | 93.60%             |
 
 </div></details>
 
@@ -217,7 +217,7 @@ More examples you can find at:
 
 [VAD examples](examples/vad)
 
-[WWS examples](examples/kws)
+[KWS examples](examples/kws)
 
 [Alignment examples](examples/align)
 
@@ -245,7 +245,7 @@ The Athena-v2.0 can support these architectures:
 | TTS_Transfprmer                                          | TTS  | Li N, Liu S, Liu Y, et al. Neural speech synthesis with transformer network[C]//Proceedings of the AAAI Conference on Artificial Intelligence. 2019, 33(01): 6706-6713.                                                                                           |
 | Marblenet                                                | VAD  | Jia F, Majumdar S, Ginsburg B. Marblenet: Deep 1d time-channel separable convolutional neural network for voice activity detection[C]//ICASSP 2021-2021 IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP). IEEE, 2021: 6818-6822. |
 | DNN                                                     | VAD  |   Tashev I, Mirsamadi S. DNN-based causal voice activity detector[C]//Information Theory and Applications Workshop. 2016.                                                                                                                                                                                                                                                                |
-| CNN-DNN, CRNN, A-Transformer, A-Conformer, AV-Transformer | WWS  | Xu Y, Sun J, Han Y, et al. Audio-Visual Wake Word Spotting System for MISP Challenge 2021[C]//ICASSP 2022-2022 IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP). IEEE, 2022: 9246-9250.                                          |
+| CNN-DNN, CRNN, A-Transformer, A-Conformer, AV-Transformer | KWS  | Xu Y, Sun J, Han Y, et al. Audio-Visual Wake Word Spotting System for MISP Challenge 2021[C]//ICASSP 2022-2022 IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP). IEEE, 2022: 9246-9250.                                          |
 
 </div></details>
 
