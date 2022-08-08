@@ -1,5 +1,5 @@
 # coding=utf-8
-# Copyright (C) 2019 ATHENA AUTHORS; Xiangang Li; Dongwei Jiang; Xiaoning Lei; Chaoyang Mei
+# Copyright (C) 2019 ATHENA AUTHORS; Chaoyang Mei; Jianwei Sun
 # All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");

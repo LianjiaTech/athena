@@ -1,5 +1,5 @@
 # coding=utf-8
-# Copyright (C) 2022 ATHENA AUTHORS;
+# Copyright (C) 2022 ATHENA AUTHORS; Jianwei Sun
 # All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");

@@ -1,5 +1,5 @@
 # coding=utf-8
-# Copyright (C) 2021 ATHENA AUTHORS;
+# Copyright (C) ATHENA AUTHORS;
 # All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
