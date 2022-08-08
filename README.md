@@ -17,6 +17,7 @@ All of our models are implemented in Tensorflow>=2.0.1. For ease of use, we prov
 - Deployment with Tensorflow C++(Local server)
 
 ## What's new
+- 2022/06/01 The [Athena-model-zoo](https://github.com/LianjiaTech/athena-model-zoo.git) is built. 
 - 2022/05/13 The runtime supports [C++ decoding](runtime/core)(E2E, Streaming, WFST, PrefixBeamSearch etc) and [Deployment](runtime/server)
 - 2022/05/10 The functions about [adding noise and rir](athena/transform/feats/add_rir_noise_aecres_test.py) aecres to clean noise are added to the transform
 - 2022/04/25 The functions about [KWS](athena/models/kws) are added to Athena-v2.0
@@ -209,6 +210,10 @@ python athena/run_demo.py --inference_type asr --saved_model_dir examples/asr/ai
 #TTS test
 python athena/run_demo.py --inference_type tts --text_csv examples/tts/data_baker/test/test.csv --saved_model_dir athena-model-zoo/tts/data_baker/saved_model  
 ```
+
+There are some pre-trained models you can find at:
+[Athena-model-zoo](https://github.com/LianjiaTech/athena-model-zoo.git)
+
 More examples you can find at:
 
 [ASR examples](examples/asr)
