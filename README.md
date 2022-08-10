@@ -211,7 +211,7 @@ python athena/run_demo.py --inference_type asr --saved_model_dir examples/asr/ai
 python athena/run_demo.py --inference_type tts --text_csv examples/tts/data_baker/test/test.csv --saved_model_dir athena-model-zoo/tts/data_baker/saved_model  
 ```
 
-There are some pre-trained models you can find at:
+There are some pre-trained models and you can find at:
 [Athena-model-zoo](https://github.com/LianjiaTech/athena-model-zoo.git)
 
 More examples you can find at:

@@ -67,9 +67,9 @@ RUN pip3 --default-timeout=1000 install sox \
 	tensorflow-text==2.3.0 -i https://pypi.tuna.tsinghua.edu.cn/simple
 
 # clone *athena* package and install athena package
-RUN git clone -b Athena-v0.2 git@git.lianjia.com:speech_tech/athena.git && \
+RUN git clone https://github.com/LianjiaTech/athena.git && \
     cd athena && python setup.py bdist_wheel && \
-    python -m pip install --ignore-installed dist/athena-0.1.0*.whl
+    python -m pip install --ignore-installed dist/athena-2.0*.whl
 <<<<<<< HEAD
 
 =======
