@@ -73,3 +73,16 @@ python athena_wakeup/test_main_av.py examples/misp/kws/xtxt/configs/kws_av_trans
 ### 5.1 MISP Challenge 2021 webset:https://mispchallenge.github.io/index.html
 ### 5.2 Our final score is 0.091 and ranked 3rd among all the 17 teams
 ### 5.3 the Paper ["AUDIO-VISUAL WAKE WORD SPOTTING SYSTEM FOR MISP CHALLENGE 2021"](https://arxiv.org/abs/2204.08686) have been accepted by ICASSP 2022
+
+# Citation
+``` bibtex
+@INPROCEEDINGS{9747216,
+  author={Cheng, Ming and Wang, Haoxu and Wang, Yechen and Li, Ming},
+  booktitle={ICASSP 2022 - 2022 IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP)}, 
+  title={The DKU Audio-Visual Wake Word Spotting System for the 2021 MISP Challenge}, 
+  year={2022},
+  volume={},
+  number={},
+  pages={9256-9260},
+  doi={10.1109/ICASSP43922.2022.9747216}}
+```
