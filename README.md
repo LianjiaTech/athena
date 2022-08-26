@@ -40,9 +40,9 @@ All of our models are implemented in Tensorflow>=2.0.1. For ease of use, we prov
 
 <details><summary>expand</summary><div>
 
-- May 2022 [TIME DOMAIN ADVERSARIAL VOICE CONVERSION FOR ADD 2022](https://arxiv.org/pdf/2204.08692.pdf) and Our team ranked 3rd in Track 1 in the MISP 2021
-- May 2022 [Audio-Visual Wake Word Spotting System for MISP Challenge 2021](examples/kws/README.md) and Our team ranked the top first in Track 3.1 in the ADD 2022
+- May 2022 [TIME DOMAIN ADVERSARIAL VOICE CONVERSION FOR ADD 2022](https://arxiv.org/pdf/2204.08692.pdf) and Our team ranked the top first in Track 3.1 in the ADD 2022
 - May 2022 [Audio Deep Fake Detection System with Neural Stitching for ADD 2022](https://arxiv.org/pdf/2204.08720.pdf) and Our team ranked the top first in Track 3.2 in the ADD 2022
+- May 2022 [Audio-Visual Wake Word Spotting System for MISP Challenge 2021](examples/kws/README.md) and Our team ranked 3rd in Track 1 in the MISP 2021 
 
 
 </div></details>
